@@ -101,6 +101,7 @@ class MPDSkill(MycroftSkill):
             time.sleep(10)
             self.emitter.emit(Message(self.name + '.connect'))
             return
+        self.server.clear()
         self.albums = self.server.list('album')
         self.artists = self.server.list('artist')
         self.genres = self.server.list('genre')
