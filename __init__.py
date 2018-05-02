@@ -115,10 +115,10 @@ class MPDSkill(MycroftSkill):
         self.add_event('mycroft.audio.service.pause', self.handle_pause)
         self.add_event('mycroft.audio.service.resume', self.handle_play)
         self.emitter.on('mycroft.media.stop', self.handle_media_stop)
-        self.emitter.on('recognizer_loop:record_begin',  self.lower_volume)
-        self.emitter.on('recognizer_loop:record_end', self.restore_volume)
-        self.emitter.on('recognizer_loop:audio_output_start', self.lower_volume)
-        self.emitter.on('recognizer_loop:audio_output_end', self.restore_volume)
+        self.emitter.on('recognizer_loop:record_begin',  self.handle_pause)
+        self.emitter.on('recognizer_loop:record_end', self.handle_play)
+        self.emitter.on('recognizer_loop:audio_output_start', self.handle_pause)
+        self.emitter.on('recognizer_loop:audio_output_end', self.handle_play)
 
     @intent_file_handler('Play.intent')
     def handle_play_playlist(self, message):
