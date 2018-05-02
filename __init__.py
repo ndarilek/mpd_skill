@@ -119,6 +119,7 @@ class MPDSkill(MycroftSkill):
         self.add_event('mycroft.audio.service.prev', self.handle_prev)
         self.add_event('mycroft.audio.service.pause', self.handle_pause)
         self.add_event('mycroft.audio.service.resume', self.handle_play)
+        self.emitter.on('mycroft.media.stop', self.handle_media_stop)
         self.emitter.on('recognizer_loop:record_begin',  self.lower_volume)
         self.emitter.on('recognizer_loop:record_end', self.restore_volume)
         self.emitter.on('recognizer_loop:audio_output_start', self.lower_volume)
@@ -149,6 +150,12 @@ class MPDSkill(MycroftSkill):
             self.server.searchadd('album', p)
 
         self.server.play()
+
+    def handle_media_stop(self, message):
+        """ handler for 'mycroft.media.stop' """
+        origin = message.data.get('origin', '')
+        if origin != self.name:
+            self.stop()
 
     def stop(self, message=None):
         LOG.info('Handling stop request')
