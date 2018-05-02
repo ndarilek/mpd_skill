@@ -115,10 +115,10 @@ class MPDSkill(MycroftSkill):
         self.add_event('mycroft.audio.service.pause', self.handle_pause)
         self.add_event('mycroft.audio.service.resume', self.handle_play)
         self.emitter.on('mycroft.media.stop', self.handle_media_stop)
-        self.emitter.on('recognizer_loop:record_begin',  self.handle_pause)
-        self.emitter.on('recognizer_loop:record_end', self.handle_play)
-        self.emitter.on('recognizer_loop:audio_output_start', self.handle_pause)
-        self.emitter.on('recognizer_loop:audio_output_end', self.handle_play)
+        self.emitter.on('recognizer_loop:record_begin',  self._pause)
+        self.emitter.on('recognizer_loop:record_end', self._play)
+        self.emitter.on('recognizer_loop:audio_output_start', self._pause)
+        self.emitter.on('recognizer_loop:audio_output_end', self._play)
 
     @intent_file_handler('Play.intent')
     def handle_play_playlist(self, message):
@@ -159,12 +159,18 @@ class MPDSkill(MycroftSkill):
     def handle_prev(self, message):
         self.server.previous()
 
-    def handle_pause(self, message):
+    def handle_pause(self, message = None):
         self.server.pause(1)
 
-    def handle_play(self, message):
+    def _pause(self, event = None):
+        self.handle_pause()
+
+    def handle_play(self, message = None):
         """Resume playback if paused"""
         self.server.pause(0)
+
+    def _play(self, event = None):
+        self.handle_play()
 
     def lower_volume(self, message):
         LOG.info('lowering volume')
