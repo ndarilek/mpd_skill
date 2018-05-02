@@ -101,18 +101,13 @@ class MPDSkill(MycroftSkill):
             time.sleep(10)
             self.emitter.emit(Message(self.name + '.connect'))
             return
-
         self.albums = self.server.list('album')
         self.artists = self.server.list('artist')
         self.genres = self.server.list('genre')
-
         self.playlist = self.albums + self.artists + self.genres
-
-        self.register_vocabulary(self.name, 'NameKeyword')
 
     def initialize(self):
         LOG.info('initializing MPD skill')
-
         self.emitter.on(self.name + '.connect', self._connect)
         self.emitter.emit(Message(self.name + '.connect'))
         self.add_event('mycroft.audio.service.next', self.handle_next)
@@ -128,8 +123,7 @@ class MPDSkill(MycroftSkill):
     @intent_file_handler('Play.intent')
     def handle_play_playlist(self, message):
         LOG.info('Handling play request')
-        key, confidence = extractOne(message.data.get('music'),
-                                     self.playlist)
+        key, confidence = extractOne(message.data.get('music'), self.playlist)
         if confidence > 50:
             p = key
         else:
@@ -139,16 +133,13 @@ class MPDSkill(MycroftSkill):
         self.server.stop()
         self.speak("Playing " + str(p))
         time.sleep(3)
-
         self.server.clear()
-
         if p in self.genres:
             self.server.searchadd('genre', p)
         elif p in self.artists:
             self.server.searchadd('artist', p)
         else:
             self.server.searchadd('album', p)
-
         self.server.play()
 
     def handle_media_stop(self, message):
